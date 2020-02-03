@@ -1,0 +1,14 @@
+etc/init/vendor.xiaomi.hardware.mfidoca@1.0-service.rc
+etc/init/vendor.xiaomi.hardware.mlipay@1.0-service.rc
+etc/init/vendor.xiaomi.hardware.mtdservice@1.0-service.rc
+etc/init/vendor.xiaomi.hardware.tidaservice@1.0-service.rc
+etc/init/vendor.xiaomi.hardware.vsimapp@1.0-service.rc
+etc/permissions/vendor.xiaomi.hardware.mtdservice-V1.0-java-permission.xml
+etc/permissions/vendor.xiaomi.hardware.vsimapp-V1.0-java-permission.xml
+framework/vendor.xiaomi.hardware.mtdservice-V1.0-java.jar
+framework/vendor.xiaomi.hardware.vsimapp-V1.0-java.jar
+lib/vendor.xiaomi.hardware.mfidoca@1.0.so
+lib/vendor.xiaomi.hardware.mlipay@1.0.so
+lib/vendor.xiaomi.hardware.mtdservice@1.0.so
+lib/vendor.xiaomi.hardware.tidaservice@1.0.so
+lib/vendor.xiaomi.hardware.vsimapp@1.0.so
