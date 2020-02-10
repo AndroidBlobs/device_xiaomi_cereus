@@ -74,13 +74,13 @@
 -->
 <MediaSettings>
     <!-- Each camcorder profile defines a set of predefined configuration parameters -->
-    <CamcorderProfiles cameraId="0">
+    <CamcorderProfiles cameraId="0" startOffsetMs="300">
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h263"
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -102,7 +102,7 @@
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -168,7 +168,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -190,7 +190,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -289,13 +289,13 @@
         <ImageEncoding quality="70" />
         <ImageDecoding memCap="20000000" />
     </CamcorderProfiles>
-    <CamcorderProfiles cameraId="1">
+    <CamcorderProfiles cameraId="1" startOffsetMs="300">
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h263"
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -317,7 +317,7 @@
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -383,7 +383,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -405,7 +405,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -471,13 +471,13 @@
         <ImageEncoding quality="70" />
         <ImageDecoding memCap="20000000" />
     </CamcorderProfiles>
-    <CamcorderProfiles cameraId="2">
+    <CamcorderProfiles cameraId="2" startOffsetMs="300">
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h263"
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -499,7 +499,7 @@
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -565,7 +565,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -587,7 +587,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -686,13 +686,13 @@
         <ImageEncoding quality="70" />
         <ImageDecoding memCap="20000000" />
     </CamcorderProfiles>
-    <CamcorderProfiles cameraId="3">
+    <CamcorderProfiles cameraId="3" startOffsetMs="300">
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h263"
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -714,7 +714,7 @@
                    bitRate="192000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="128000"
                    sampleRate="48000"
@@ -780,7 +780,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"
@@ -802,7 +802,7 @@
                    bitRate="1000000"
                    width="176"
                    height="144"
-                   frameRate="30" />
+                   frameRate="20" />
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="48000"

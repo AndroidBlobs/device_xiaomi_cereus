@@ -8,7 +8,6 @@ sched_getscheduler: 1
 mlock: 1
 munlock: 1
 recvfrom: 1
-sched_getaffinity: 1
 sched_setaffinity: 1
 sched_getaffinity: 1
 flock: 1
@@ -17,6 +16,3 @@ fchmodat: 1
 fsync: 1
 sysinfo: 1
 setsockopt: 1
-setrlimit: 1
-eventfd2: 1
-

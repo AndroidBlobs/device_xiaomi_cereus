@@ -5,8 +5,8 @@
 # system.prop for generic sdk
 #
 
-vendor.rild.libpath=mtk-ril.so
-vendor.rild.libargs=-d /dev/ttyC0
+rild.libpath=mtk-ril.so
+rild.libargs=-d /dev/ttyC0
 
 
 # MTK, Infinity, 20090720 {
@@ -78,34 +78,20 @@ ro.mtk_perf_response_time=1
 # disable ipo for development
 sys.ipo.disable=1
 
-# Extb HONGMI-58162 tangshouxing.wt add audio prop
+# HONGMI-40045,yangbo.wt,add,20180307,add for audio property
 audio.chk.cal.spk=0
 audio.chk.cal.us=0
 
-#HONGMI-54623,huangrongbiao.wt,modify,load prop file with boardid
-ro.product.wtdevice=S98507AE1
-ro.build.display.wtid.miui=SW_S98507AE1_V001_M13_XM_C3D_USR_MP
-ro.build.display.wtid.ato=SW_S98507AE1_V001_M13_XM_C3D_USRD_ATO
-
-#HONGMI-54509, huangrongbiao.wt, for screen display adjust.
-ro.colorpick_adjust=true
-sys.paper_mode_max_level=32
-
-#add for dirac
-persist.dirac.acs.controller=afm
-persist.dirac.afm.mode=global
-persist.dirac.acs.storeSettings=1
-persist.dirac.poolsize=2
-persist.dirac.acs.startAtBoot=1
-ro.audio.soundfx.dirac=true
-
-#Bug 431743, wuxuanhang.wt, modify to disable B40 for MCC:310/311/312, 20190307
+#Bug343950,zhaoqf_sh add to disable B40 for MCC:310/311/312 2018321
 persist.sys.manual_select_band=false
 
-#Bug434125, liuyulong.wt, add, 20190321
-ro.fota.oem=Xiaomi
-#ExtB HONGMI-66185 zhanglei5.wt modified,20190620
-ro.build.software.version=9.1_10
-#Bug434125, liuyulong.wt, add, 20190321
+#ExtR42659, shangminxia.wt, 20180423,whitepoint and UnlimitedCTP adjust.
+ro.colorpick_adjust=true
+sys.paper_mode_max_level=32
+#+ExtB HONGMI-45882 wangfendie.wt, add, 20180602,for JIO&AIRTEL user agent
+# MIUI DEL: START
+#ro.fota.oem=Xiaomi
+#ro.build.software.version=8.1_8
+# END
 
 #

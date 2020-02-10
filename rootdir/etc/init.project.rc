@@ -6,12 +6,6 @@ on init
     mkdir /mnt/media_rw/usbotg 0700 media_rw media_rw
     mkdir /storage/usbotg 0700 root root
 
-on fs
-   mkdir /mnt/vendor/persist/stability 0755 system system
-
-on post-fs
-    insmod /vendor/lib/modules/exfat.ko
-
 on post-fs-data
 
 #Camera
@@ -43,7 +37,6 @@ on post-fs-data
     chmod 0660 /dev/spm
     chown system system /dev/spm
 
-#bug 425586,20190109,gjx.wt,fingerprint bringup,start
 #Fingerprint
     chown system system /dev/goodix_fp
     chmod 0644 /dev/goodix_fp
@@ -61,9 +54,10 @@ on post-fs-data
     chown system system /sys/devices/platform/fingerprint/wakeup_enable
     chmod 0660 /sys/devices/platform/fingerprint/wakeup_enable
 
+    #+ bug 350736, zhaofeng.wt, ADD, 20180416, add fp fast screen on feture
     chown system system /sys/devices/platform/fingerprint/fingerdown_wait
     chmod 0660 /sys/devices/platform/fingerprint/fingerdown_wait
-#bug 425586,20190109,gjx.wt,fingerprint bringup,end
+    #- bug 350736, zhaofeng.wt, ADD, 20180416, add fp fast screen on feture
 
 on init
     # Refer to http://source.android.com/devices/tech/storage/index.html
@@ -83,5 +77,33 @@ service spm_script /vendor/bin/spm_loader
     user system
     group system
     class core
+    oneshot
+
+# FFU for samsung
+#service mmc_ffu_ss /vendor/bin/mmc_ffu do /vendor/bin/emmc_b318_06.bin /dev/block/mmcblk0 15 6 3
+#    class main
+#    user root
+#    group system
+#    oneshot
+
+# FFU for micron
+#service mmc_ffu_micron /vendor/bin/mmc_ffu do /vendor/bin/emmc_m_07.bin /dev/block/mmcblk0 13 7 4
+#    class main
+#    user root
+#    group system
+#    oneshot
+
+# FFU for samsung 4+64
+service mmc_ffu_ss1 /vendor/bin/mmc_ffu do /vendor/bin/V3MLC64GB_PCF_TEST1.bin /dev/block/mmcblk0 15 cf 5
+    class main
+    user root
+    group system
+    oneshot
+
+# FFU for samsung 3+32
+service mmc_ffu_ss2 /vendor/bin/mmc_ffu do /vendor/bin/V3MLC32GB_P6F_TEST1.bin /dev/block/mmcblk0 15 6f 1
+    class main
+    user root
+    group system
     oneshot
 

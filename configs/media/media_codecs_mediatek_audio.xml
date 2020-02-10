@@ -83,7 +83,14 @@ Only the three quirks included above are recognized at this point:
             <Quirk name="supports-multiple-frames-per-input-buffer" />
         </MediaCodec>
         <MediaCodec name="OMX.MTK.AUDIO.DECODER.GSM" type="audio/gsm" />
-        <MediaCodec name="OMX.MTK.AUDIO.DECODER.WMA" type="audio/x-ms-wma" />
+        <MediaCodec name="OMX.MTK.AUDIO.DECODER.RAW" type="audio/raw" />
+        <MediaCodec name="OMX.MTK.AUDIO.DECODER.G711.ALAW" type="audio/g711-alaw" >
+            <Quirk name="decoder-lies-about-number-of-channels" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.AUDIO.DECODER.G711.MLAW" type="audio/g711-mlaw" >
+            <Quirk name="decoder-lies-about-number-of-channels" />
+        </MediaCodec>
+        <!--<MediaCodec name="OMX.MTK.AUDIO.DECODER.WMA" type="audio/x-ms-wma" />--> <!--HONGMI-43035,zhengwenfang.wt,20180421,delete wma-->
         <MediaCodec name="OMX.MTK.AUDIO.DECODER.ADPCM.MS" type="audio/x-adpcm-ms" />
         <MediaCodec name="OMX.MTK.AUDIO.DECODER.ADPCM.DVI" type="audio/x-adpcm-dvi-ima" />
         <MediaCodec name="OMX.MTK.AUDIO.DECODER.APE" type="audio/ape" >

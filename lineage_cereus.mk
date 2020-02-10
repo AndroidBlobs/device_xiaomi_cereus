@@ -17,7 +17,7 @@ PRODUCT_MODEL := Redmi 6
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 TARGET_VENDOR := xiaomi
 TARGET_VENDOR_PRODUCT_NAME := cereus
-PRODUCT_BUILD_PROP_OVERRIDES += PRIVATE_BUILD_DESC="cereus-user 9 PPR1.180610.011 V10.4.4.0.PCGMIXM release-keys"
+PRODUCT_BUILD_PROP_OVERRIDES += PRIVATE_BUILD_DESC="cereus-user 8.1.0 O11019 V10.3.4.0.OCGFROR release-keys"
 
 # Set BUILD_FINGERPRINT variable to be picked up by both system and vendor build.prop
-BUILD_FINGERPRINT := xiaomi/cereus/cereus:9/PPR1.180610.011/V10.4.4.0.PCGMIXM:user/release-keys
+BUILD_FINGERPRINT := xiaomi/cereus/cereus:8.1.0/O11019/V10.3.4.0.OCGFROR:user/release-keys

@@ -86,6 +86,9 @@ Only the three quirks included above are recognized at this point:
         <MediaCodec name="OMX.MTK.VIDEO.ENCODER.H263" type="video/3gpp" update="true">
             <Limit name="measured-frame-rate-176x144" range="238-828" />
         </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.ENCODER.HEVC" type="video/hevc" update="true">
+            <Limit name="measured-frame-rate-0320x0240" range="160-351" />
+        </MediaCodec>
         <MediaCodec name="OMX.MTK.VIDEO.ENCODER.AVC" type="video/avc" update="true">
             <Limit name="measured-frame-rate-320x240" range="161-561" />
             <Limit name="measured-frame-rate-720x480" range="67-234" />
@@ -124,7 +127,7 @@ Only the three quirks included above are recognized at this point:
             <Limit name="measured-frame-rate-1920x1080" range="50-110" />
         </MediaCodec>
          <MediaCodec name="OMX.MTK.VIDEO.DECODER.HEVC" type="video/hevc" update="true">
-            <Limit name="measured-frame-rate-352x288" range="335-737" />
+            <Limit name="measured-frame-rate-352x288" range="880-890" /><!--bug354549,zhengwenfang.wt,modify,20180514-->
             <Limit name="measured-frame-rate-720x480" range="142-494" />
             <Limit name="measured-frame-rate-1280x720" range="75-262" />
             <Limit name="measured-frame-rate-1920x1080" range="74-162" />
@@ -145,19 +148,17 @@ Only the three quirks included above are recognized at this point:
         </MediaCodec>
         <!-- Google codec -->
         <MediaCodec name="OMX.google.mpeg4.decoder" type="video/mp4v-es" update="true">
-            <Limit name="measured-frame-rate-176x144" range="301-663" />
+            <Limit name="measured-frame-rate-176x144" range="820-870" />
             <Limit name="measured-frame-rate-480x360" range="100-250" />
         </MediaCodec>
         <MediaCodec name="OMX.google.h263.decoder" type="video/3gpp" update="true">
             <Limit name="measured-frame-rate-176x144" range="156-350" />
             <Limit name="measured-frame-rate-352x288" range="128-297" />
         </MediaCodec>
-        <!-- HONGMI-61043, zhengwenfang.wt, add , 20190502, for cactus CTS-->
         <MediaCodec name="OMX.google.h264.decoder" type="video/avc" update="true">
             <Limit name="measured-frame-rate-320x240" range="183-636" />
             <Limit name="measured-frame-rate-720x480" range="45-156" />
-            <Limit name="measured-frame-rate-1280x720" range="17-37" />
-            <Limit name="measured-frame-rate-1920x1080" range="7-15" />
+            <Limit name="measured-frame-rate-1280x720" range="28-96" />
         </MediaCodec>
          <MediaCodec name="OMX.google.hevc.decoder" type="video/hevc" update="true">
             <Limit name="measured-frame-rate-352x288" range="182-634" />

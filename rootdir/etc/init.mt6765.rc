@@ -1,17 +1,16 @@
 # MTK platform .rc configure
 
-import ${ro.vendor.rc}init.connectivity.rc
+import ${ro.mtkrc.path}init.connectivity.rc
 import /vendor/etc/init/hw/init.mt6765.usb.rc
 import /vendor/etc/init/hw/init.project.rc
 import /FWUpgradeInit.rc
 import /vendor/etc/init/hw/init.aee.rc
-import /system/etc/init/hw/init.aee.rc
-import ${ro.vendor.rc}init.volte.rc
-import ${ro.vendor.rc}init.mal.rc
-import ${ro.vendor.rc}init.sensor_1_0.rc
+import ${ro.mtkrc.path}init.volte.rc
+import ${ro.mtkrc.path}init.mal.rc
+import ${ro.mtkrc.path}init.sensor_1_0.rc
 
 # init.modem.rc must be the LAST rc file because vold.post_fs_data_done is set in it
-import ${ro.vendor.rc}init.modem.rc
+import ${ro.mtkrc.path}init.modem.rc
 # *** DO NOT import the new rc file after this line ***
 
 on early-init
@@ -35,16 +34,20 @@ on init
     # if primary storage is physical, set ro.vold.primary_physical to 1
     # setprop ro.vold.primary_physical 1
 
+    # BATTERY proc
+    chown shell system /proc/mtk_battery_cmd/current_cmd
+    chown shell system /proc/mtk_battery_cmd/discharging_cmd
+
     # Change owner for the XM sconfig sys node
     chown system system /sys/class/thermal/thermal_message/sconfig
 
 # Temp Backward compatibility
-    mkdir /mnt/vendor/protect_f 0771 system system
-    mkdir /mnt/vendor/protect_s 0771 system system
-    mkdir /mnt/vendor/nvcfg 0771 system system
+    mkdir /vendor/protect_f 0771 system system
+    mkdir /vendor/protect_s 0771 system system
+    mkdir /vendor/nvcfg 0771 system system
 
 #Create nvdata mount point
-    mkdir /mnt/vendor/nvdata 0771 system system
+    mkdir /vendor/nvdata 0771 system system
 # Create CIP mount point
     mkdir /custom
 
@@ -68,6 +71,11 @@ on init
 # update bg rt_runtime 100ms
     write /dev/cpuctl/bg_non_interactive/cpu.rt_runtime_us 100000
 
+    
+#bug 342273,20180403,haozhenghui,add,add ctrl rtc status
+    chown system system /sys/devices/platform/mt-rtc/rtc/rtc0/dis_rtc
+#ExtB38848 ,fanhonggen.wt  20180831,add , Make MTU adjusting
+write /proc/sys/net/ipv4/tcp_mtu_probing 1
 on late-init
     write /proc/bootprof "INIT:late-init"
 
@@ -87,33 +95,26 @@ on charger
     write /sys/devices/system/cpu/cpu5/online 0
     write /sys/devices/system/cpu/cpu4/online 0
 
+    mount ext4 /dev/block/platform/bootdevice/by-name/system /system ro wait
     exec /system/bin/e2fsck -f -p /dev/block/platform/bootdevice/by-name/cache
     mount ext4 /dev/block/platform/bootdevice/by-name/cache /cache rw wait
     chmod 0666 /dev/kmsg
-    chmod 0775 /mnt/vendor
-    mkdir /mnt/vendor/nvcfg
-    mount ext4 /dev/block/platform/bootdevice/by-name/nvcfg /mnt/vendor/nvcfg rw wait
-    chown system system /mnt/vendor/nvcfg
-    chmod 0771 /mnt/vendor/nvcfg
-    restorecon_recursive /mnt/vendor/nvcfg
+    mount ext4 /dev/block/platform/bootdevice/by-name/nvcfg /vendor/nvcfg rw wait
+    chown system system /vendor/nvcfg
+    chmod 0771 /vendor/nvcfg
+    restorecon_recursive /vendor/nvcfg
     write /sys/devices/platform/battery_meter/FG_daemon_log_level 7
     write /sys/bus/platform/devices/battery/FG_daemon_log_level 7
     write /sys/power/pm_async 0
     start fuelgauged
-    start fuelgauged_nvram
-
-    chown system system /sys/class/leds/lcd-backlight/brightness
-    chown system system /sys/class/leds/red/brightness
-    chown system system /sys/class/leds/green/brightness
-
     start servicemanager
-    start hwservicemanager
-    start light-hal-2-0
 
 on fs
     write /proc/bootprof "INIT:Mount_START"
     write /sys/kernel/debug/tracing/trace_marker "B|1|Mount"
     mount_all /vendor/etc/fstab.mt6765
+    chmod 0775 /persist/
+    chown root system /persist/
     exec /system/bin/tune2fs -O has_journal -u 10010 -r 4096 /dev/block/platform/bootdevice/by-name/userdata
     write /sys/kernel/debug/tracing/trace_marker "E"
     write /proc/bootprof "INIT:Mount_END"
@@ -152,12 +153,7 @@ on post-fs
     chown radio system /proc/freqhopping/freqhopping_debug
     chown radio system /proc/freqhopping/status
     chown radio system /proc/freqhopping/userdef
-
-    # Support A/B feature for emmc boot region
-    symlink /dev/block/sda /dev/block/mmcblk0boot0
-    symlink /dev/block/sdb /dev/block/mmcblk0boot1
-    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
-    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
+    restorecon_recursive_force /persist
 
 # change owner
     chown system system /proc/bootprof
@@ -165,16 +161,11 @@ on post-fs
     chown root system /proc/mtprof/cputime
     chown root system /proc/mtprof/reboot_pid
 
-    chown system system /mnt/vendor/protect_f
-    chmod 0770 /mnt/vendor/protect_f
+    chown system system /vendor/protect_f
+    chmod 0770 /vendor/protect_f
 
-    chown system system /mnt/vendor/protect_s
-    chmod 0770 /mnt/vendor/protect_s
-
-    chown root system /mnt/vendor/persist
-    chmod 0770 /mnt/vendor/persist
-    mkdir /mnt/vendor/persist/fdsd 0770 system system
-    restorecon_recursive_force /mnt/vendor/persist
+    chown system system /vendor/protect_s
+    chmod 0770 /vendor/protect_s
 
 on post-fs-data
     write /proc/bootprof "INIT:post-fs-data"
@@ -187,59 +178,48 @@ on post-fs-data
     write /sys/block/dm-1/queue/read_ahead_kb 2048
     write /sys/block/dm-2/queue/read_ahead_kb 2048
 
-    chown system system /mnt/vendor/nvcfg
-    chmod 0771 /mnt/vendor/nvcfg
-    restorecon_recursive /mnt/vendor/nvcfg
-    chown system system /mnt/vendor/nvcfg/fg
-    chown system system /mnt/vendor/nvcfg/fg/old_fg_data
-    chown system system /mnt/vendor/nvcfg/fg/car_tune_value
-
+    chown system system /vendor/nvcfg
+    chmod 0771 /vendor/nvcfg
+    restorecon_recursive /vendor/nvcfg
 
     # create basic filesystem structure
-    # mkdir /mnt/vendor/nvdata 2770 root system
-    # We chown/chmod /mnt/vendor/nvdata again so because mount is run as root + defaults
-    chown root system /mnt/vendor/nvdata
-    chmod 0771 /mnt/vendor/nvdata
-    mkdir /mnt/vendor/nvdata/media 0771 media audio
+    # mkdir /vendor/nvdata 2770 root system
+    # We chown/chmod /vendor/nvdata again so because mount is run as root + defaults
+    chown root system /vendor/nvdata
+    chmod 0771 /vendor/nvdata
+    mkdir /vendor/nvdata/media 0771 media audio
 
     #Create cct mount point
-    mkdir /mnt/vendor/cct
-    chown root system /mnt/vendor/cct
-    chmod 0771 /mnt/vendor/cct
-
-    #Create flash folder
-    mkdir /data/vendor/flash
-    chown root system /data/vendor/flash
-    chmod 0771 /data/vendor/flash
-
-    #Create NDD mount point
-    mkdir /data/vendor/camera_dump
-    chown root system /data/vendor/camera_dump
-    chmod 0777 /data/vendor/camera_dump
-
-    #Create flicker mount point
-    mkdir /data/vendor/flicker
-    chown root system /data/vendor/flicker
-    chmod 0771 /data/vendor/flicker
+    mkdir /data/cct
+    chown root system /data/cct
+    chmod 0771 /data/cct
 
     # Set SELinux security contexts on upgrade or policy update.
-    restorecon_recursive /mnt/vendor/nvdata
+    restorecon_recursive /vendor/nvdata
 
+    chmod 0660 /data/misc/wifi/p2p_supplicant.conf
 
     #give system access to rfkill device node
     chmod 0660 /dev/rfkill
 
     # create for muxd pts device node , to operate without root
     mkdir /dev/radio 0770 radio radio
-# Extb 57391 JIRA getian.wt 20190506 add charge_logger function
-    mkdir /data/vendor/charge_logger 0771 system system
 
+    mkdir /data/drm/wv 0770 drm system
 
 #DualCam
     mkdir /data/misc/camera 0771 root system
+
 # GPS
+    mkdir /data/gps_mnl 0771 gps system
+    mkdir /data/misc/gps 0770 gps system
+    mkdir /data/mpe_mnl 0771 gps system
+    chown gps system /data/mpe_mnl
     chmod 0775 /vendor/xbin/MPED
     chmod 0666 /dev/gps_emi
+
+    # NFC
+    mkdir /data/nfc_socket 0771 nfc radio
 
 # -----------------------
 # Add by MTK
@@ -257,13 +237,27 @@ on post-fs-data
     chmod 0440 /dev/sspm
     chown root system /dev/sspm
 
+    # dhcp server
+    mkdir /data/misc/dhcp 0770 dhcp wifi
+    chown dhcp wifi /data/misc/dhcp
+
+    # dhcpv6 server
+    mkdir /data/misc/wide-dhcpv6 0770 dhcp wifi
+    chown dhcp wifi /data/misc/wide-dhcpv6
+    
+    # android log much
+    mkdir /data/misc/log 0755	logd logd
+
     # radvd
+    mkdir /data/misc/radvd 0770 system system
     chmod 444 /etc/radvd/radvd.conf
 
     # Mali 3D GPU driver
     #insmod /vendor/lib/modules/mali.ko
     chmod 666 /dev/mali0
     #chown system graphics /dev/mali
+
+
 
     # Touch Panel
     # chmod 0664 /dev/touch
@@ -288,18 +282,14 @@ on post-fs-data
     # set ptmx group to non-root
     chown root radio /dev/ptmx
 
+    # RTC
+    mkdir /data/misc/rtc 0770 system system
 
     # M4U
     #insmod /vendor/lib/modules/m4u.ko
     #mknod /dev/M4U_device c 188 0
     chmod 0444 /dev/m4u
     #chown system media /dev/M4U_device
-
-    #set mlock to 64MB for netd
-    setrlimit 8 67108864 67108864
-
-    #set mlock to 64MB for netd
-    setrlimit 8 67108864 67108864
 
     #set mlock limit to infinate (for m4u operation)
     setrlimit 8 -1 -1
@@ -319,22 +309,24 @@ on post-fs-data
     #OPEN DSP
     chmod 0640 /dev/audio_ipi
     chown media media /dev/audio_ipi
-
-    #SmartPA
-    chmod 0640 /dev/audio_scp
-    chown media media /dev/audio_scp
     chown audioserver audio /sys/bus/platform/devices/rt5509_param.0/prop_param
     chown audioserver audio /sys/bus/platform/devices/rt5509_param.1/prop_param
-    chown audioserver audio /sys/bus/platform/devices/mt6660-param.0/prop_params
+
+
 
     #Accdet
     chown root radio /sys/devices/platform/Accdet_Driver/driver/accdet_call_state
 
     #Fingerprint
+    chown system system /dev/goodix_fp
     chmod 0666 /dev/goodix_fp
 
+	# touchscreen node
+    chmod 0666 /sys/class/touchscreen/gmnode
+    
     #VideoCodec
     #insmod /vendor/lib/modules/vcodec_kernel_driver.ko
+    mknod /dev/Vcodec c 160 0
     chmod 0660 /dev/Vcodec
     chown media system /dev/Vcodec
 
@@ -355,14 +347,22 @@ on post-fs-data
     chown radio system /sys/devices/platform/mt-pmic/low_battery_protect_ut
 
     #MDDB
-    mkdir /data/vendor/meta 0777 root root
-    mkdir /data/vendor/meta/mddb 0777 root root
+    mkdir /data/misc/mddb 0711 system system
 
+    mkdir /data/amit/ 0770 system system
+
+    mkdir /data/misc/akmd 0770 system system
+    mkdir /data/misc/s62x 0771 compass compass
+    mkdir /data/acdapi/ 0770 system system
+    chmod 0660 /data/misc/acdapi/calib.dat
+    chmod 0660 /data/misc/acdapi/param.dat
+    chmod 0660 /data/misc/acdapi/sensors.dat
     chown system /sys/devices/platform/msensor/driver/cpsopmode
     chown system /sys/devices/platform/msensor/driver/cpsreptxy
     chown system /sys/devices/platform/msensor/driver/cpsreptz
     chown system /sys/devices/platform/gsensor/driver/cpsopmode
     chown system /sys/devices/platform/gsensor/driver/cpsrange
+    mkdir	/data/mcube 0664 system system
 
     chown system /sys/class/input/input1/enable
     chown system /sys/class/input/input1/delay
@@ -448,21 +448,34 @@ on post-fs-data
     #EM eint
     chown root diag /sys/bus/platform/drivers/eint/current_eint
 
+    # for ppp options file
+    mkdir /data/misc/ppp 0770 bluetooth net_bt
+
+    # for libipsec_ims
+    mkdir /data/misc/setkey 0770 root system
+    restorecon /data/misc/setkey
+
     # Android SEC related device nodes
     chmod 0660 /dev/sec
     chown root system /dev/sec
 
     # FM Radio device node
-    chmod 0660 /dev/fm
-    chown system media /dev/fm
+    mknod /dev/fm     c 193 0;
+    chmod 0666 /dev/fm
+    #for xiaomi FM yangbo.wt 20180416
+    chown media media /dev/fm
 
     # device apc settings
 
     # device info /proc interface
+    mknod /dev/devmap c 196 0;
     chmod 0440 /dev/devmap
     chown root system /dev/devmap
 
     # bluetooth
+    mkdir /data/@btmtk 0770 bluetooth net_bt
+    chown bluetooth bluetooth /data/@btmtk/host_cache
+    chown bluetooth bluetooth /data/@btmtk/dev_cache
     chown bluetooth bluetooth /dev/hid-keyboard
     chmod 0660 /dev/hid-keyboard
     #Use uinput's default permission
@@ -612,9 +625,11 @@ on post-fs-data
 
 
     #Thermal
-    mkdir /data/vendor/.tp/ 0775 system system
-    chown root system /data/vendor/thermal
-    chown root system /data/vendor/thermal/config
+    mkdir /data/.tp/ 0775 system system
+    setprop vendor.tp.init 0
+
+    #MTK wfq add for bugreport mtkpwdump
+    mkdir /data/misc/mtkpwdlog 0775 system system
 
     # power manager
     write /sys/power/pm_async 0
@@ -629,7 +644,8 @@ on boot
     chmod 0660 /sys/power/autosleep
 
     chmod 0664 /sys/class/leds/lcd-backlight/brightness
-    chown system system /sys/class/leds/lcd-backlight/brightness
+    # Permission for mmigroup flashlight test
+    chmod 0666 /sys/class/leds/flashlight/brightness
 
     chown system system /sys/devices/system/cpu/cpufreq/hotplug/cpu_num_base
     chmod 0660 /sys/devices/system/cpu/cpufreq/hotplug/cpu_num_base
@@ -724,18 +740,6 @@ on boot
     chown system system /proc/ppm/policy/hica_settings/L_ONLY_to_4L_LL/loading_hold_time
     chmod 0660 /proc/ppm/policy/hica_settings/L_ONLY_to_4L_LL/loading_hold_time
 
-# cpu_loading
-    chown system system /proc/cpu_loading/onoff
-    chmod 0664 /proc/cpu_loading/onoff
-    chown system system /proc/cpu_loading/overThrhld
-    chmod 0664 /proc/cpu_loading/overThrhld
-    chown system system /proc/cpu_loading/poltime_nsecs
-    chmod 0664 /proc/cpu_loading/poltime_nsecs
-    chown system system /proc/cpu_loading/poltime_secs
-    chmod 0664 /proc/cpu_loading/poltime_secs
-    chown system system /proc/cpu_loading/uevent_enable
-    chmod 0664 /proc/cpu_loading/uevent_enable
-
 # CPU freq
     chown system system /proc/cpufreq/cpufreq_limited_by_hevc
     chmod 0660 /proc/cpufreq/cpufreq_limited_by_hevc
@@ -829,9 +833,6 @@ on boot
     chmod 0660 /proc/perfmgr/boost_ctrl/eas_ctrl/perfserv_fg_boost
     chown system system /proc/perfmgr/boost_ctrl/eas_ctrl/perfserv_bg_boost
     chmod 0660 /proc/perfmgr/boost_ctrl/eas_ctrl/perfserv_bg_boost
-    chown system system /proc/perfmgr/boost_ctrl/dram_ctrl/ddr
-    chmod 0660 /proc/perfmgr/boost_ctrl/eas_ctrl/dram_ctrl/ddr
-
  
 ##Netlog tool
    #change permissions about terminal
@@ -867,6 +868,16 @@ on boot
     chmod 660 /dev/ttyGS1
     chown system radio /dev/ttyGS1
 
+on property:ro.mtk_emmc_support=1
+    # Support A/B feature for emmc boot region
+    symlink /dev/block/mmcblk0boot0 /dev/block/platform/bootdevice/by-name/preloader_a
+    symlink /dev/block/mmcblk0boot1 /dev/block/platform/bootdevice/by-name/preloader_b
+
+on property:ro.mtk_ufs_booting=1
+    # Support A/B feature for ufs boot region
+    symlink /dev/block/sda /dev/block/platform/bootdevice/by-name/preloader_a
+    symlink /dev/block/sdb /dev/block/platform/bootdevice/by-name/preloader_b
+
 on property:ro.board.platform=mt6753
     chown system system /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
     chmod 0660 /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
@@ -876,6 +887,7 @@ on property:vold.decrypt=trigger_reset_main
     write /proc/bootprof "INIT:vold.decrypt=trigger_reset_main"
     setprop sys.boot_completed 0
     setprop dev.bootcomplete 0
+    setprop service.nvram_init 0
 
 on property:vold.decrypt=trigger_post_fs_data
     write /proc/bootprof "INIT:vold.decrypt=trigger_post_fs_data"
@@ -883,17 +895,20 @@ on property:vold.decrypt=trigger_post_fs_data
 on property:vold.decrypt=trigger_restart_min_framework
     write /proc/bootprof "INIT:vold.decrypt=trigger_restart_min_framework"
     start nvram_daemon
+    start msensord
     start permission_check
 
 on property:vold.decrypt=trigger_restart_framework
     write /proc/bootprof "INIT:vold.decrypt=trigger_restart_framework"
     start nvram_daemon
+    start msensord
     start permission_check
 
 on property:vold.decrypt=trigger_shutdown_framework
     write /proc/bootprof "INIT:vold.decrypt=trigger_shutdown_framework"
     setprop sys.boot_completed 0
     setprop dev.bootcomplete 0
+    setprop service.nvram_init 0
 
 
 # Define TCP buffer sizes for various networks
@@ -916,8 +931,8 @@ on early-init && property:ro.boot.boot_trace=1
     setprop debug.atrace.tags.enableflags 0x1fffffe
 
 ## mtk printk uart controller
-on property:persist.vendor.uartconsole.enable=*
-    write /proc/mtprintk ${persist.vendor.uartconsole.enable}
+on property:persist.uartconsole.enable=1
+    write /proc/mtprintk 1
 
 
 # bugreport is triggered by holding down volume down, volume up and power
@@ -969,7 +984,6 @@ on property:sys.boot_completed=1
 
     # stop bootprof
     write /proc/bootprof 0
-    write /proc/mtprintk ${persist.vendor.uartconsole.enable}
 
 service pppoe_wlan0 /vendor/bin/launchpppoe
     user root
@@ -977,6 +991,44 @@ service pppoe_wlan0 /vendor/bin/launchpppoe
     disabled
     oneshot
 
+on property:service.pppoe_wlan0.enable=0
+    stop pppoe_wlan0
+
+on property:service.pppoe_wlan0.enable=1
+    start pppoe_wlan0
+# write proc for test sim
+    on property:gsm.sim.ril.testsim=0
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 0
+    write /proc/sys/net/ipv4/tcp_rto_min 200
+    write /proc/sys/net/ipv4/tcp_early_retrans 3
+    on property:gsm.sim.ril.testsim=1
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 1
+    write /proc/sys/net/ipv4/tcp_rto_min 400
+    write /proc/sys/net/ipv4/tcp_early_retrans 0
+    on property:gsm.sim.ril.testsim.2=0
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 0
+    write /proc/sys/net/ipv4/tcp_rto_min 200
+    write /proc/sys/net/ipv4/tcp_early_retrans 3
+    on property:gsm.sim.ril.testsim.2=1
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 1
+    write /proc/sys/net/ipv4/tcp_rto_min 400
+    write /proc/sys/net/ipv4/tcp_early_retrans 0
+    on property:gsm.sim.ril.testsim.3=0
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 0
+    write /proc/sys/net/ipv4/tcp_rto_min 200
+    write /proc/sys/net/ipv4/tcp_early_retrans 3
+    on property:gsm.sim.ril.testsim.3=1
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 1
+    write /proc/sys/net/ipv4/tcp_rto_min 400
+    write /proc/sys/net/ipv4/tcp_early_retrans 0
+    on property:gsm.sim.ril.testsim.4=0
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 0
+    write /proc/sys/net/ipv4/tcp_rto_min 200
+    write /proc/sys/net/ipv4/tcp_early_retrans 3
+    on property:gsm.sim.ril.testsim.4=1
+    write /proc/sys/net/netfilter/nf_conntrack_tcp_no_window_check 1
+    write /proc/sys/net/ipv4/tcp_rto_min 400
+    write /proc/sys/net/ipv4/tcp_early_retrans 0
 
 service cmmb /system/bin/cmmbsp
     class main
@@ -1018,24 +1070,43 @@ service cmmb /system/bin/cmmbsp
 #	group gps system radio
 #	class main
 
-
 # Battery info
-on property:persist.vendor.mediatek.fg.disable=1
+on property:persist.mediatek.fg.disable=1
     write /sys/devices/platform/battery_meter/FG_daemon_disable 1
     write /sys/bus/platform/devices/battery/FG_daemon_disable 1
 
-on property:persist.vendor.mediatek.fg.force25c=1
+on property:persist.mediatek.fg.force25c=1
     write /sys/devices/platform/battery_meter/FG_drv_force25c 1
     write /sys/bus/platform/devices/battery/Battery_Temperature 25
 
-on property:persist.vendor.mediatek.fg.force25c=0
+on property:persist.mediatek.fg.force25c=0
     write /sys/devices/platform/battery_meter/FG_drv_force25c 0
     write /sys/bus/platform/devices/battery/Battery_Temperature 65535
 
-on property:persist.vendor.mediatek.fg.log.enable=1
+on property:persist.mediatek.fg.log.enable=1
     write /sys/devices/platform/battery_meter/FG_daemon_log_level 7
     write /sys/bus/platform/devices/battery/FG_daemon_log_level 7
     write /proc/sys/kernel/printk 8
+
+on property:vendor.thermal.manager.data.policy=0
+    exec /vendor/bin/thermal_manager thermal_xm_normal.conf
+
+on property:vendor.thermal.manager.data.policy=1
+    exec /vendor/bin/thermal_manager thermal_xm_high.conf
+
+on property:vendor.thermal.manager.data.policy=10
+    exec /vendor/bin/thermal_manager thermal_xm_nolimit.conf
+
+on property:vendor.tp.init=0 && property:persist.sys.thermal.config=0
+    setprop vendor.tp.init 1
+
+on property:vendor.tp.init=0 && property:persist.sys.thermal.config=1
+    write /sys/class/thermal/thermal_message/sconfig 1
+    setprop vendor.tp.init 1
+
+on property:vendor.tp.init=0 && property:persist.sys.thermal.config=10
+    write /sys/class/thermal/thermal_message/sconfig 10
+    setprop vendor.tp.init 1
 
 on boot
 
@@ -1047,50 +1118,46 @@ setprop persist.radio.reset_on_switch false
 setprop rild.mark_switchuser 0
 #end
 
+#
+# add the service for reboot to meta mode
+#
+service pre_meta /system/bin/pre_meta
+    class main
+    disabled
+    oneshot
+
 # MBIMD Service
 service mbimd /vendor/bin/mbimd debug
     disabled
     oneshot
 
 # add meta_tst for ATM
-service meta_tst /vendor/bin/meta_tst
-    class main
-    user radio gps system wifi
-    group radio gps system wifi audio bluetooth media
-    disabled
-    oneshot
-
-# add loghidl client
-service loghidlsysservice /system/bin/loghidlsysservice
+service meta_tst /system/bin/meta_tst
     class main
     user root
     group system
     disabled
+    oneshot
 
 # start meta_tst for ATM
 on property:sys.boot_completed=1 && property:ro.boot.atm=enable
     start meta_tst
-    start loghidlvendorservice
-    start loghidlsysservice
 
-# +Extb 57391 JIRA getian.wt 20190506 add charge_logger function
-service charge_logger /system/vendor/bin/charge_logger
-    class late_start
-    user root
-    group system wakelock
-# -Extb 57391 JIRA getian.wt 20190506 add charge_logger function
+# reset mdmode when modem crash happens in ATM
+on property:mtk.md1.status=reset
+    setprop persist.atm.mdmode normal
+
+on property:service.mbim.enable=0
+    stop mbimd
+
+on property:service.mbim.enable=1
+    start mbimd
 
 # FPSGO FBT Game
 on init
-    insmod /vendor/lib/modules/fpsgo.ko
-    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
-
-# VSIM service (vendor OSI)
-service osi /system/bin/osi
-    class main
-    user root
-    disabled
-    oneshot
-    #seclabel u:r:osi:s0
-
-
+    insmod /lib/modules/fpsgo.ko
+# MTK wfq add for bugreport
+service mtkpwdumpds /system/bin/mtkpwdumpd
+   class late_start
+   user system
+   group system

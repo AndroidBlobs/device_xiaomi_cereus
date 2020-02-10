@@ -49,7 +49,6 @@
                 <item>Speaker</item>
                 <item>Earpiece</item>
                 <item>Built-In Mic</item>
-                <item>Built-In Back Mic</item>
                 <item>FM Tuner In</item>
                 <item>Voice Call In</item>
             </attachedDevices>
@@ -67,7 +66,7 @@
                     <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
                              samplingRates="44100,48000" channelMasks="AUDIO_CHANNEL_OUT_STEREO"/>
                 </mixPort>
-                <mixPort name="primary input" role="sink" maxActiveCount="0">
+                <mixPort name="primary input" role="sink">
                     <profile name="" format="AUDIO_FORMAT_PCM_16_BIT"
                              samplingRates="8000,16000,32000,44100,48000"
                              channelMasks="AUDIO_CHANNEL_IN_MONO,AUDIO_CHANNEL_IN_STEREO,AUDIO_CHANNEL_IN_VOICE_UPLINK,AUDIO_CHANNEL_IN_VOICE_DNLINK"/>

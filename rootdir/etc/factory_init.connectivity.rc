@@ -8,8 +8,14 @@ on post-fs-data
     chown system system /dev/ttyMT2
 
 # GPS
-    mkdir /data/vendor/gps 0770 gps system
+    mkdir /data/gps_mnl 0771 gps system
+    mkdir /data/misc/gps 0770 gps system
     chown gps gps /dev/stpgps
+    chown gps gps /sys/class/gpsdrv/gps/pwrctl
+    chown gps gps /sys/class/gpsdrv/gps/suspend
+    chown gps gps /sys/class/gpsdrv/gps/state
+    chown gps gps /sys/class/gpsdrv/gps/pwrsave
+    chown gps gps /sys/class/gpsdrv/gps/status
     chmod 0660 /dev/stpgps
 
 # GPS EMI
@@ -32,8 +38,8 @@ on boot
 #
 # WMT
 service wmt_loader /vendor/bin/wmt_loader
-    user system
-    group system
+    user root
+    group root
     oneshot
 
 service wmt_launcher /vendor/bin/wmt_launcher -p /vendor/firmware/
@@ -65,22 +71,23 @@ on boot
     insmod /vendor/lib/modules/wmt_drv.ko
 
 # load bt_drv
-on property:vendor.connsys.driver.ready=yes
+on property:service.wcn.driver.ready=yes
     insmod /vendor/lib/modules/bt_drv.ko
 
 # load wifi chrdev driver and wlan driver after wmt_loader finish
-on property:vendor.connsys.driver.ready=yes
+on property:service.wcn.driver.ready=yes
     insmod /vendor/lib/modules/wmt_chrdev_wifi.ko
-    insmod /vendor/lib/modules/wlan_drv_${ro.vendor.wlan.gen}.ko
-    start wlan_assistant
+    insmod /vendor/lib/modules/wlan_drv_${ro.wlan.gen}.ko
 
 # load fmradio_drv
-on property:vendor.connsys.driver.ready=yes
+on property:service.wcn.driver.ready=yes
     insmod /vendor/lib/modules/fmradio_drv.ko
+    setprop fmradio_drv.ko 1
 
 # load gps_drv
-on property:vendor.connsys.driver.ready=yes
+on property:service.wcn.driver.ready=yes
   insmod /vendor/lib/modules/gps_drv.ko
+  setprop gps_drv.ko 1
 
 #
 # Connectivity related kernel objects (End)
